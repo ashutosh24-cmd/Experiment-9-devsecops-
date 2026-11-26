@@ -1,0 +1,39 @@
+name: Compliance as Code
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  compliance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Install OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x opa
+          sudo mv opa /usr/local/bin/opa
+
+      - name: Run Compliance Checks
+        run: |
+          violations=$(opa eval --format raw --data policy/compliance.rego --input config.json 'data.compliance.deny')
+          echo "$violations"
+
+          if [ "$violations" != "set()" ] && [ "$violations" != "[]" ]; then
+            echo "Compliance violations detected!"
+            exit 1
+          fi
+
+          echo "Compliance check passed!"
+
+      - name: Build Golang Application
+        run: go build ./...
