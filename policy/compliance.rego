@@ -17,3 +17,6 @@ deny contains "Debug mode must be disabled" if {
 deny contains "Insecure TLS must be disabled" if {
     input.insecure_tls == true
 }
+deny contains "Application log must be enabled" if {
+    input.application_log == false
+}

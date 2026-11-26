@@ -1,6 +1,7 @@
 {
   "app_name": "secure-go-app",
-  "port": 80,
-  "debug": true,
-  "insecure_tls": true
+  "port": 8080,
+  "debug": false,
+  "insecure_tls": false,
+  "application_log": true
 }
